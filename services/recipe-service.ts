@@ -1,19 +1,30 @@
 import { Recipe, RecipeQueryParams } from "@/types/recipe";
 
-export async function generateRecipe(
+export async function generateRecipes(
   params: RecipeQueryParams,
-): Promise<Recipe> {
+): Promise<Recipe[]> {
   const response = await fetch("/api/generate-recipe", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(params),
   });
 
   const result = await response.json();
 
-  if (!result.success) {
-    throw new Error(result.error || "Помилка при генерації рецепта");
+  if (!response.ok || !result.success) {
+    throw new Error(
+      result.error || "Не вдалося згенерувати рецепти. Спробуйте ще раз.",
+    );
   }
 
-  return result.data;
+  // Переконуємося, що завжди повертаємо саме масив
+  if (Array.isArray(result.data)) {
+    return result.data;
+  } else if (result.data) {
+    return [result.data];
+  }
+
+  return [];
 }

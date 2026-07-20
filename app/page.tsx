@@ -4,21 +4,22 @@ import { useState } from "react";
 import { GeneratorForm } from "@/components/generator/generator-form";
 import { RecipeCard } from "@/components/recipe/recipe-card";
 import { Recipe, RecipeQueryParams } from "@/types/recipe";
-import { generateRecipe } from "@/services/recipe-service";
+import { generateRecipes } from "@/services/recipe-service";
 
 export default function HomePage() {
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  // 1. Зберігаємо масив рецептів
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async (params: RecipeQueryParams) => {
     setIsLoading(true);
     setError(null);
-    setRecipe(null);
+    setRecipes([]);
 
     try {
-      const data = await generateRecipe(params); // Викликаємо наш сервіс
-      setRecipe(data);
+      const data = await generateRecipes(params); // Передає Recipe[]
+      setRecipes(data); // Записуємо масив
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -28,12 +29,11 @@ export default function HomePage() {
     } finally {
       setIsLoading(false);
     }
-  }; // <-- ТУТ закриваємо handleGenerate!
+  };
 
-  // Тепер return належить компоненту HomePage:
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50/40 to-emerald-50/30 px-4 py-12 md:py-20">
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-y-8">
         <header className="text-center space-y-3">
           <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold tracking-wide uppercase">
             SmartChef AI
@@ -57,8 +57,14 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Відображення рецепта */}
-        {recipe && <RecipeCard recipe={recipe} />}
+        {/* 2. Рендеримо масив рецептів через map */}
+        {recipes.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {recipes.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
