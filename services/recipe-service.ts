@@ -13,6 +13,9 @@ export async function generateRecipes(
 
   const result = await response.json();
 
+  console.log("Повна відповідь Gemini:");
+  console.log(result);
+
   if (!response.ok || !result.success) {
     throw new Error(
       result.error || "Не вдалося згенерувати рецепти. Спробуйте ще раз.",
