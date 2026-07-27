@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { GeneratorForm } from "@/components/generator/generator-form";
-import { RecipeCard } from "@/components/recipe/recipe-card";
+import { RecipeCard } from "@/components/RecipeCard/recipe-card";
 import { Recipe, RecipeQueryParams } from "@/types/recipe";
 import { generateRecipes } from "@/services/recipe-service";
 
