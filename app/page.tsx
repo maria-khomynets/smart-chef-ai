@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { GeneratorForm } from "@/components/generator/generator-form";
-import { RecipeCard } from "@/components/RecipeCard/recipe-card";
+import RecipeCard from "@/components/RecipeCard/RecipeCard";
 import { Recipe, RecipeQueryParams } from "@/types/recipe";
 import { generateRecipes } from "@/services/recipe-service";
-
+import { useMutation } from "@tanstack/react-query";
 export default function HomePage() {
   // 1. Зберігаємо масив рецептів
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { mutate, data, isPending, error } = useMutation({
+    mutationFn: generateRecipes,
+  });
 
   const handleGenerate = async (params: RecipeQueryParams) => {
     setIsLoading(true);
